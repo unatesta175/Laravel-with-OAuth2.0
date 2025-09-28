@@ -14,14 +14,16 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Create Admin User
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@kapasbeautyspa.com',
-            'password' => Hash::make('password123'),
-            'role' => 'admin',
-            'phone' => '+60123456789',
-            'email_verified_at' => now(),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@kapasbeautyspa.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password123'),
+                'role' => 'admin',
+                'phone' => '+60123456789',
+                'email_verified_at' => now(),
+            ]
+        );
 
         // Create Therapist Users
         $therapists = [
@@ -58,21 +60,23 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($therapists as $therapist) {
-            User::create([
-                'name' => $therapist['name'],
-                'email' => $therapist['email'],
-                'password' => Hash::make('password123'),
-                'role' => 'therapist',
-                'phone' => $therapist['phone'],
-                'email_verified_at' => now(),
-            ]);
+            User::firstOrCreate(
+                ['email' => $therapist['email']],
+                [
+                    'name' => $therapist['name'],
+                    'password' => Hash::make('password123'),
+                    'role' => 'therapist',
+                    'phone' => $therapist['phone'],
+                    'email_verified_at' => now(),
+                ]
+            );
         }
 
         // Create Client Users
         $clients = [
             [
-                'name' => 'Sarah Johnson',
-                'email' => 'sarah.johnson@gmail.com',
+                'name' => 'Muhammad Ilyas Bin Amran',
+                'email' => 'ilyas@gmail.com',
                 'phone' => '+60123456800',
             ],
             [
@@ -98,18 +102,16 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($clients as $client) {
-            User::create([
-                'name' => $client['name'],
-                'email' => $client['email'],
-                'password' => Hash::make('password123'),
-                'role' => 'client',
-                'phone' => $client['phone'],
-                'email_verified_at' => now(),
-            ]);
+            User::firstOrCreate(
+                ['email' => $client['email']],
+                [
+                    'name' => $client['name'],
+                    'password' => Hash::make('password123'),
+                    'role' => 'client',
+                    'phone' => $client['phone'],
+                    'email_verified_at' => now(),
+                ]
+            );
         }
     }
 }
-
-
-
-

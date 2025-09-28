@@ -15,16 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->decimal('amount', 8, 2);
-            $table->enum('status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
-            $table->string('payment_method')->default('toyyibpay');
-            $table->string('toyyibpay_transaction_id')->nullable();
-            $table->string('toyyibpay_bill_code')->nullable();
+            $table->enum('payment_method', ['cash', 'card', 'online']);
+            $table->enum('status', ['pending', 'completed', 'failed', 'refunded'])->default('pending');
+            $table->string('transaction_id')->nullable();
             $table->timestamp('paid_at')->nullable();
-            $table->timestamp('failed_at')->nullable();
-            $table->text('failure_reason')->nullable();
             $table->timestamps();
-
-            $table->index(['status', 'created_at']);
         });
     }
 
@@ -36,7 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('payments');
     }
 };
-
-
-
-

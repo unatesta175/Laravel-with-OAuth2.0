@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('password');
             $table->enum('role', ['admin', 'therapist', 'client'])->default('client');
             $table->string('phone')->nullable();
+            $table->string('image')->nullable();
+            $table->string('google_id')->nullable();
+            $table->string('password_reset_token')->nullable();
+            $table->timestamp('password_reset_expires')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

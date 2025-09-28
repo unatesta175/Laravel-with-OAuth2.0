@@ -13,18 +13,14 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // client
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
-            $table->foreignId('therapist_id')->constrained('users')->onDelete('cascade');
-            $table->date('appointment_date');
-            $table->time('appointment_time');
-            $table->enum('status', ['pending', 'confirmed', 'checked_in', 'completed', 'cancelled', 'no_show'])->default('pending');
+            $table->foreignId('therapist_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->dateTime('appointment_date');
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending');
             $table->text('notes')->nullable();
             $table->decimal('total_amount', 8, 2);
             $table->timestamps();
-
-            $table->index(['appointment_date', 'appointment_time']);
-            $table->index(['therapist_id', 'appointment_date']);
         });
     }
 
@@ -36,7 +32,3 @@ return new class extends Migration
         Schema::dropIfExists('bookings');
     }
 };
-
-
-
-

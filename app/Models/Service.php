@@ -13,13 +13,16 @@ class Service extends Model
         'category_id',
         'name',
         'description',
+        'extradescription',
         'price',
         'duration',
+        'type',
         'image',
         'is_active',
     ];
 
     protected $casts = [
+        'extradescription' => 'array',
         'price' => 'decimal:2',
         'duration' => 'integer',
         'is_active' => 'boolean',
@@ -30,7 +33,7 @@ class Service extends Model
      */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(ServiceCategory::class, 'category_id');
     }
 
     /**
@@ -59,6 +62,22 @@ class Service extends Model
     }
 
     /**
+     * Scope to get normal type services
+     */
+    public function scopeNormal($query)
+    {
+        return $query->where('type', 'normal');
+    }
+
+    /**
+     * Scope to get promo type services
+     */
+    public function scopePromo($query)
+    {
+        return $query->where('type', 'promo');
+    }
+
+    /**
      * Get available therapists for this service on a specific date
      */
     public function getAvailableTherapists($date)
@@ -69,7 +88,3 @@ class Service extends Model
                     });
     }
 }
-
-
-
-

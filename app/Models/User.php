@@ -6,12 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,8 +24,13 @@ class User extends Authenticatable
         'password',
         'role',
         'phone',
+        'image',
         'email_verified_at',
+        'google_id',
+        'password_reset_token',
+        'password_reset_expires',
     ];
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -115,5 +120,15 @@ class User extends Authenticatable
     public function services()
     {
         return $this->belongsToMany(Service::class, 'service_therapist');
+    }
+
+    /**
+     * Get the OAuth scopes for this user based on their role
+     */
+    public function getOAuthScopes()
+    {
+        // Return empty array to use default scopes
+        // Passport will handle scopes automatically
+        return [];
     }
 }

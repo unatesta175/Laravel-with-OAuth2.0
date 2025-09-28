@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class ServiceCategory extends Model
 {
     use HasFactory;
+
+    protected $table = 'service_categories';
 
     protected $fillable = [
         'name',
@@ -25,7 +27,15 @@ class Category extends Model
      */
     public function services()
     {
-        return $this->hasMany(Service::class);
+        return $this->hasMany(Service::class, 'category_id');
+    }
+
+    /**
+     * Get the tags associated with this service category.
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(ServiceCategoryTag::class, 'service_category_tag_pivot', 'service_category_id', 'service_category_tag_id');
     }
 
     /**

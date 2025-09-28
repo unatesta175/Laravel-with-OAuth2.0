@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class ServiceCategoryTag extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'description',
-        'image',
         'is_active',
     ];
 
@@ -21,15 +19,15 @@ class Category extends Model
     ];
 
     /**
-     * Get the services for the category.
+     * Get the service categories that have this tag.
      */
-    public function services()
+    public function serviceCategories()
     {
-        return $this->hasMany(Service::class);
+        return $this->belongsToMany(ServiceCategory::class, 'service_category_tag_pivot', 'service_category_tag_id', 'service_category_id');
     }
 
     /**
-     * Scope to get only active categories
+     * Scope to get only active tags
      */
     public function scopeActive($query)
     {

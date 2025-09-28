@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'auth.cookie' => \App\Http\Middleware\AuthenticateCookie::class,
         ]);
 
         // NUCLEAR OPTION: Force our CORS middleware to run FIRST, before everything else
@@ -23,7 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->api(prepend: [
             \App\Http\Middleware\CorsMiddleware::class,
-            \App\Http\Middleware\CookieTokenMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
