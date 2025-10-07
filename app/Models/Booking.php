@@ -30,6 +30,7 @@ class Booking extends Model
     const STATUS_PENDING = 'pending';
     const STATUS_CONFIRMED = 'confirmed';
     const STATUS_CHECKED_IN = 'checked_in';
+    const STATUS_CHECKED_OUT = 'checked_out';
     const STATUS_COMPLETED = 'completed';
     const STATUS_CANCELLED = 'cancelled';
     const STATUS_NO_SHOW = 'no_show';
@@ -124,6 +125,12 @@ class Booking extends Model
         return $this->status === self::STATUS_COMPLETED && !$this->review;
     }
 }
+
+
+
+
+
+
 
 
 

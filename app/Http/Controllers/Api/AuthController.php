@@ -129,7 +129,7 @@ class AuthController extends Controller
         );
 
         return response()->json([
-            'message' => 'Login successful',
+            'message' => 'You have successfully logged in!',
             'user' => [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -161,7 +161,7 @@ class AuthController extends Controller
         $cookie = cookie()->forget('access_token');
 
         return response()->json([
-            'message' => 'Logged out successfully'
+            'message' => 'Logged out successfully!'
         ])->cookie($cookie);
     }
 
@@ -233,12 +233,19 @@ class AuthController extends Controller
      */
     public function updateProfile(Request $request): JsonResponse
     {
+        Log::info('Update profile method called', [
+            'method' => $request->method(),
+            'url' => $request->url(),
+            'user_id' => $request->user()?->id
+        ]);
+
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'phone' => 'nullable|string|max:20',
             'password' => 'sometimes|required|string|min:8|confirmed',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max
         ]);
 
         if ($validator->fails()) {
@@ -248,33 +255,102 @@ class AuthController extends Controller
             ], 422);
         }
 
-        $updateData = [];
+        try {
+            $updateData = [];
 
-        if ($request->has('name')) {
-            $updateData['name'] = $request->name;
+            if ($request->has('name')) {
+                $updateData['name'] = $request->name;
+            }
+
+            if ($request->has('phone')) {
+                $updateData['phone'] = $request->phone;
+            }
+
+            if ($request->has('password')) {
+                $updateData['password'] = Hash::make($request->password);
+            }
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+
+                // Save to storage/app/public/profile_images
+                $storagePath = $image->storeAs('profile_images', $imageName, 'public');
+
+                // Generate URL accessible from frontend
+                $imageUrl = '/storage/' . $storagePath;
+                $updateData['image'] = $imageUrl;
+            }
+
+            $user->update($updateData);
+
+            return response()->json([
+                'message' => 'Profile updated successfully',
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'phone' => $user->phone,
+                    'image' => $user->image,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Profile update error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to update profile'
+            ], 500);
         }
+    }
 
-        if ($request->has('phone')) {
-            $updateData['phone'] = $request->phone;
-        }
-
-        if ($request->has('password')) {
-            $updateData['password'] = Hash::make($request->password);
-        }
-
-        $user->update($updateData);
-
-        return response()->json([
-            'message' => 'Profile updated successfully',
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'email' => $user->email,
-                'role' => $user->role,
-                'phone' => $user->phone,
-                'image' => $user->image,
-            ]
+    /**
+     * Change password (separate from profile update)
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        Log::info('Change password method called', [
+            'method' => $request->method(),
+            'url' => $request->url(),
+            'user_id' => $request->user()?->id
         ]);
+
+        $user = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Verify current password
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'Current password is incorrect',
+                'errors' => ['current_password' => ['The current password is incorrect']]
+            ], 422);
+        }
+
+        try {
+            $user->update([
+                'password' => Hash::make($request->password)
+            ]);
+
+            return response()->json([
+                'message' => 'Password changed successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Password change error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to change password'
+            ], 500);
+        }
     }
 
     /**
@@ -312,7 +388,7 @@ class AuthController extends Controller
 
             // Find or create user
             $user = User::where('email', $email)->first();
-            
+
             if (!$user) {
                 // Create new user with Google avatar
                 $user = User::create([
@@ -398,7 +474,7 @@ class AuthController extends Controller
 
         try {
             $user = User::where('email', $request->email)->first();
-            
+
             if (!$user) {
                 return response()->json([
                     'message' => 'No user found with this email address'
@@ -407,7 +483,7 @@ class AuthController extends Controller
 
             // Generate reset token
             $token = Str::random(64);
-            
+
             // Store token in database
             $user->update([
                 'password_reset_token' => $token,

@@ -28,6 +28,7 @@ class Payment extends Model
     ];
 
     // Status constants
+    const STATUS_UNPAID = 'unpaid';
     const STATUS_PENDING = 'pending';
     const STATUS_PAID = 'paid';
     const STATUS_FAILED = 'failed';
@@ -47,6 +48,14 @@ class Payment extends Model
     public function scopePaid($query)
     {
         return $query->where('status', self::STATUS_PAID);
+    }
+
+    /**
+     * Scope to get unpaid payments
+     */
+    public function scopeUnpaid($query)
+    {
+        return $query->where('status', self::STATUS_UNPAID);
     }
 
     /**
@@ -86,6 +95,12 @@ class Payment extends Model
         ]);
     }
 }
+
+
+
+
+
+
 
 
 

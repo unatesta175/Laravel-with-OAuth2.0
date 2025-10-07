@@ -3,14 +3,24 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ServiceCategoryController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\ServiceCategoryController;
+use App\Http\Controllers\Api\ServiceCategoryTagController;
 
+
+// CORS Test route
+Route::get('/test-cors', function () {
+    return response()->json([
+        'success' => true,
+        'message' => 'CORS is working!',
+        'timestamp' => now()
+    ]);
+});
 
 // Public routes
 Route::post('/auth/register', [AuthController::class, 'register']);
@@ -20,12 +30,13 @@ Route::post('/auth/forgot-password', [AuthController::class, 'sendPasswordResetE
 Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
 // Public data routes (for browsing services without authentication)
-Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/service-categories', [ServiceCategoryController::class, 'index']);
 Route::get('/service-categories/{category}', [ServiceCategoryController::class, 'show']);
-Route::get('/categories/{category}/services', [ServiceController::class, 'getByCategory']);
+Route::get('/service-categories/{category}/services', [ServiceController::class, 'getByCategory']);
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
+Route::get('/services/{service}/therapists', [ServiceController::class, 'getServiceTherapists']);
+Route::get('/therapists/{therapist}/availability', [ServiceController::class, 'getTherapistAvailability']);
 
 // Protected routes
 Route::middleware('auth.cookie')->group(function () {
@@ -34,14 +45,7 @@ Route::middleware('auth.cookie')->group(function () {
     Route::get('/auth/me', [AuthController::class, 'me']);
     Route::post('/auth/refresh', [AuthController::class, 'refresh']);
     Route::post('/auth/profile', [AuthController::class, 'updateProfile']);
-    Route::put('/auth/change-password', [AuthController::class, 'changePassword']);
-
-    // Categories (Admin only)
-    Route::middleware('admin')->group(function () {
-        Route::post('/categories', [CategoryController::class, 'store']);
-        Route::put('/categories/{category}', [CategoryController::class, 'update']);
-        Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
-    });
+    Route::match(['PUT'], '/auth/change-password', [AuthController::class, 'changePassword']);
 
     // Services (Admin only for CUD operations)
     Route::middleware('admin')->group(function () {
@@ -57,6 +61,8 @@ Route::middleware('auth.cookie')->group(function () {
     Route::put('/bookings/{booking}/reschedule', [BookingController::class, 'reschedule']);
     Route::put('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
     Route::put('/bookings/{booking}/status', [BookingController::class, 'updateStatus']);
+    Route::get('/bookings/{booking}/receipt', [BookingController::class, 'generateReceipt']);
+    Route::post('/bookings/{booking}/retry-payment', [BookingController::class, 'retryPayment']);
 
     // Payments
     Route::post('/payments/checkout', [PaymentController::class, 'checkout']);
@@ -75,18 +81,20 @@ Route::middleware('auth.cookie')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
 
-    // Therapist availability
-    Route::get('/therapists/{therapist}/availability', [ServiceController::class, 'getTherapistAvailability']);
-    Route::get('/services/{service}/therapists', [ServiceController::class, 'getServiceTherapists']);
+    // Bookings management (Admin and Therapist)
+    Route::get('/admin/bookings', [BookingController::class, 'getAllBookings']);
+    Route::put('/admin/bookings/{booking}/status', [BookingController::class, 'updateStatus']);
 
-    // Admin routes
+    // User list for calendar (Admin and Therapist can view therapists list)
+    Route::get('/admin/users', [UserController::class, 'index']);
+
+    // Admin-only routes
     Route::middleware('admin')->group(function () {
-        // User management
-        Route::get('/admin/users', [AuthController::class, 'getAllUsers']);
-        Route::post('/admin/users', [AuthController::class, 'createUser']);
-        Route::get('/admin/users/{user}', [AuthController::class, 'getUser']);
-        Route::put('/admin/users/{user}', [AuthController::class, 'updateUser']);
-        Route::delete('/admin/users/{user}', [AuthController::class, 'deleteUser']);
+        // User management (create, update, delete only)
+        Route::post('/admin/users', [UserController::class, 'store']);
+        Route::get('/admin/users/{user}', [UserController::class, 'show']);
+        Route::put('/admin/users/{user}', [UserController::class, 'update']);
+        Route::delete('/admin/users/{user}', [UserController::class, 'destroy']);
 
         // Service management
         Route::get('/admin/services', [ServiceController::class, 'adminIndex']);
@@ -94,17 +102,26 @@ Route::middleware('auth.cookie')->group(function () {
         Route::put('/admin/services/{service}', [ServiceController::class, 'update']);
         Route::delete('/admin/services/{service}', [ServiceController::class, 'destroy']);
 
-        // Category management
-        Route::get('/admin/categories', [CategoryController::class, 'index']);
-        Route::post('/admin/categories', [CategoryController::class, 'store']);
-        Route::get('/admin/categories/{category}', [CategoryController::class, 'show']);
-        Route::put('/admin/categories/{category}', [CategoryController::class, 'update']);
-        Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy']);
+        // Service Category management
+        Route::get('/admin/service-categories', [ServiceCategoryController::class, 'adminIndex']);
+        Route::post('/admin/service-categories', [ServiceCategoryController::class, 'store']);
+        Route::get('/admin/service-categories/{category}', [ServiceCategoryController::class, 'adminShow']);
+        Route::put('/admin/service-categories/{category}', [ServiceCategoryController::class, 'update']);
+        Route::delete('/admin/service-categories/{category}', [ServiceCategoryController::class, 'destroy']);
 
-        // Other admin routes
-        Route::get('/admin/bookings', [BookingController::class, 'getAllBookings']);
+        // Service Category Tags management
+        Route::get('/admin/service-category-tags', [ServiceCategoryTagController::class, 'index']);
+        Route::post('/admin/service-category-tags', [ServiceCategoryTagController::class, 'store']);
+        Route::put('/admin/service-category-tags/{tag}', [ServiceCategoryTagController::class, 'update']);
+        Route::delete('/admin/service-category-tags/{tag}', [ServiceCategoryTagController::class, 'destroy']);
+
+        // Other admin-only routes
         Route::get('/admin/payments', [PaymentController::class, 'getAllPayments']);
         Route::get('/admin/reviews', [ReviewController::class, 'getAllReviews']);
     });
 });
+
+// ToyyibPay callback routes (public)
+Route::post('/toyyibpay/callback', [BookingController::class, 'toyyibpayCallback']);
+Route::get('/toyyibpay/callback', [BookingController::class, 'toyyibpayCallback']);
 

@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\ServiceCategory;
 use App\Models\User;
+use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
@@ -211,22 +214,6 @@ class ServiceController extends Controller
         }
     }
 
-    // Placeholder methods for future implementation
-    public function store(Request $request)
-    {
-        return response()->json(['message' => 'Service created - coming soon']);
-    }
-
-    public function update(Request $request, $id)
-    {
-        return response()->json(['message' => 'Service updated - coming soon']);
-    }
-
-    public function destroy($id)
-    {
-        return response()->json(['message' => 'Service deleted - coming soon']);
-    }
-
     public function assignTherapist($service, Request $request)
     {
         return response()->json(['message' => 'Therapist assigned - coming soon']);
@@ -235,16 +222,6 @@ class ServiceController extends Controller
     public function removeTherapist($service, $therapist)
     {
         return response()->json(['message' => 'Therapist removed - coming soon']);
-    }
-
-    public function getTherapistAvailability($therapist)
-    {
-        return response()->json(['message' => 'Therapist availability - coming soon']);
-    }
-
-    public function getServiceTherapists($service)
-    {
-        return response()->json(['message' => 'Service therapists - coming soon']);
     }
 
     /**
@@ -279,7 +256,7 @@ class ServiceController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $validator = \Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
@@ -327,7 +304,7 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service): JsonResponse
     {
-        $validator = \Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
             'description' => 'sometimes|required|string',
             'price' => 'sometimes|required|numeric|min:0',
@@ -349,8 +326,8 @@ class ServiceController extends Controller
         // Handle image upload
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($service->image && \Storage::disk('public')->exists($service->image)) {
-                \Storage::disk('public')->delete($service->image);
+            if ($service->image && Storage::disk('public')->exists($service->image)) {
+                Storage::disk('public')->delete($service->image);
             }
 
             $file = $request->file('image');
@@ -374,8 +351,8 @@ class ServiceController extends Controller
     public function destroy(Service $service): JsonResponse
     {
         // Delete service image if exists
-        if ($service->image && \Storage::disk('public')->exists($service->image)) {
-            \Storage::disk('public')->delete($service->image);
+        if ($service->image && Storage::disk('public')->exists($service->image)) {
+            Storage::disk('public')->delete($service->image);
         }
 
         $service->delete();
@@ -383,5 +360,150 @@ class ServiceController extends Controller
         return response()->json([
             'message' => 'Service deleted successfully!'
         ]);
+    }
+
+    /**
+     * Get therapists for a specific service
+     */
+    public function getServiceTherapists($serviceId)
+    {
+        try {
+            $service = Service::findOrFail($serviceId);
+
+            // For demo purposes, return all therapists since pivot table might be empty
+            // In production, you would filter by service relationship
+            $therapists = User::where('role', 'therapist')
+                ->select(['id', 'name', 'email', 'phone', 'image'])
+                ->get();
+
+            // If no therapists found with service relationship, get all therapists
+            if ($therapists->isEmpty()) {
+                $therapists = User::where('role', 'therapist')
+                    ->select(['id', 'name', 'email', 'phone', 'image'])
+                    ->get();
+            }
+
+            // Add mock ratings and experience for demo
+            $therapists = $therapists->map(function ($therapist) {
+                $therapist->rating = 4.5 + (rand(0, 8) / 10); // Random rating between 4.5-5.3
+                $therapist->experience = rand(2, 10) . ' years';
+                $therapist->specialties = ['Relaxation', 'Therapeutic', 'Deep Tissue'];
+                return $therapist;
+            });
+
+            return response()->json([
+                'success' => true,
+                'data' => $therapists,
+                'message' => 'Therapists retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve therapists: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Get therapist availability for a specific date
+     */
+    public function getTherapistAvailability($therapistId, Request $request)
+    {
+        try {
+            $date = $request->query('date');
+            if (!$date) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Date parameter is required'
+                ], 400);
+            }
+
+            // Validate date is not in the past (allow today)
+            $requestDate = \Carbon\Carbon::parse($date);
+            \Log::info('Availability request:', [
+                'therapist_id' => $therapistId,
+                'requested_date' => $date,
+                'parsed_date' => $requestDate->toDateString(),
+                'is_today' => $requestDate->isToday(),
+                'is_past' => $requestDate->isPast(),
+                'current_time' => \Carbon\Carbon::now()->toDateTimeString()
+            ]);
+
+            if ($requestDate->isPast() && !$requestDate->isToday()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot book appointments for past dates. Please select today or a future date.'
+                ], 400);
+            }
+
+            $therapist = User::where('id', $therapistId)
+                ->where('role', 'therapist')
+                ->firstOrFail();
+
+            // Get existing bookings for this therapist on the specified date with service duration
+            $existingBookings = Booking::with('service')
+                ->where('therapist_id', $therapistId)
+                ->where('appointment_date', $date)
+                ->whereIn('status', ['pending', 'confirmed', 'checked_in'])
+                ->get();
+
+            // Create array of blocked time slots based on existing bookings and their durations
+            $blockedSlots = [];
+            foreach ($existingBookings as $booking) {
+                $startTime = \Carbon\Carbon::parse($booking->appointment_time);
+                $duration = $booking->service->duration ?? 60; // Default 60 minutes if no duration
+
+                // Add 30 minutes preparation/cleanup time to the service duration
+                $totalDuration = $duration + 30;
+                $endTime = $startTime->copy()->addMinutes($totalDuration);
+
+                // Block all 15-minute slots within this booking's time range (including prep time)
+                $currentSlot = $startTime->copy();
+                while ($currentSlot->lt($endTime)) {
+                    $blockedSlots[] = $currentSlot->format('H:i:s');
+                    $currentSlot->addMinutes(15);
+                }
+            }
+
+            // Generate time slots from 8 AM to 6 PM in 15-minute intervals
+            $timeSlots = [];
+            $startTime = 8; // 8 AM
+            $endTime = 18;  // 6 PM
+
+            for ($hour = $startTime; $hour < $endTime; $hour++) {
+                for ($minute = 0; $minute < 60; $minute += 15) {
+                    $timeString = sprintf('%02d:%02d:00', $hour, $minute);
+                    $displayTime = date('h:i A', strtotime($timeString));
+
+                    // Check if this slot is blocked
+                    $isAvailable = !in_array($timeString, $blockedSlots);
+
+                    // If it's today, also check if the time has already passed
+                    if ($requestDate->isToday()) {
+                        $slotTime = \Carbon\Carbon::parse($date . ' ' . $timeString);
+                        // Add 15 minutes buffer to current time to prevent booking slots that are too close
+                        if ($slotTime->lte(\Carbon\Carbon::now()->addMinutes(15))) {
+                            $isAvailable = false;
+                        }
+                    }
+
+                    $timeSlots[] = [
+                        'time' => $displayTime,
+                        'available' => $isAvailable
+                    ];
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $timeSlots,
+                'message' => 'Availability retrieved successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to retrieve availability: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -17,7 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth.cookie' => \App\Http\Middleware\AuthenticateCookie::class,
         ]);
 
-        // NUCLEAR OPTION: Force our CORS middleware to run FIRST, before everything else
+        // Force our CORS middleware to run FIRST, before everything else
         $middleware->web(prepend: [
             \App\Http\Middleware\CorsMiddleware::class,
         ]);
@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \App\Http\Middleware\CorsMiddleware::class,
         ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // For API routes, return JSON instead of redirecting to login

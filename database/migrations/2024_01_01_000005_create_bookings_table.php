@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('service_id')->constrained()->onDelete('cascade');
             $table->foreignId('therapist_id')->nullable()->constrained('users')->onDelete('set null');
-            $table->dateTime('appointment_date');
-            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled'])->default('pending');
+            $table->date('appointment_date');
+            $table->time('appointment_time');
+            $table->enum('status', ['pending', 'confirmed', 'completed', 'cancelled', 'checked_in', 'checked_out', 'no_show'])->default('pending');
             $table->text('notes')->nullable();
             $table->decimal('total_amount', 8, 2);
             $table->timestamps();
