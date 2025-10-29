@@ -58,7 +58,6 @@ Route::middleware('auth.cookie')->group(function () {
 
     // Bookings
     Route::apiResource('bookings', BookingController::class);
-    Route::put('/bookings/{booking}/reschedule', [BookingController::class, 'reschedule']);
     Route::put('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
     Route::put('/bookings/{booking}/status', [BookingController::class, 'updateStatus']);
     Route::get('/bookings/{booking}/receipt', [BookingController::class, 'generateReceipt']);

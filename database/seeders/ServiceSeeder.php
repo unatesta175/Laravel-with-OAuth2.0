@@ -14,10 +14,10 @@ class ServiceSeeder extends Seeder
     public function run(): void
     {
         $services = [
-            [
-                'name' => 'Dang Anum',
+           [
+                'name' => 'Terapi Bunga Susu',
                 'description' => 'Berehat & bersantai dengan memanjakan diri di dalam kehangatan mandian campuran bunga dan susu terapi yang melembutkan kulit anda',
-                'extradescription' => json_encode(["Rendam Kaki Panas", "Sauna Stim Herba", "Skrab Seluruh Badan", "Body Mask Belakang Badan", "Mandian Campuran Bunga & bunga"]),
+                'extradescription' => json_encode(["Rendam Kaki Panas", "Terapi Wap Stim Herba", "Skrab Seluruh Badan", "Body Mask Belakang Badan", "Mandian Campuran Bunga & bunga ros"]),
                 'price' => '290.00',
                 'duration' => '120',
                 'type' => 'normal',
@@ -25,9 +25,19 @@ class ServiceSeeder extends Seeder
                 'image' => 'storage/service/ps1.png',
             ],
             [
-                'name' => 'Mahsuri',
+                'name' => 'Urutan Tradisional Lembut',
+                'description' => 'Urutan lembut yang boleh mengurangkan insomnia, stress dan bagus untuk peredaran darah',
+                'extradescription' => json_encode([""]),
+                'price' => '180.00',
+                'duration' => '60',
+                'type' => 'normal',
+                'category_id' => 2,
+                'image' => 'storage/service/image_1710053954.jpg',
+            ],
+            [
+                'name' => 'Terapi Relaksasi Bersih',
                 'description' => 'Alami sesi pembersihan badan santai kami sambil menenangkan fikiran anda',
-                'extradescription' => json_encode(["Rendam Kaki Panas", "Sauna Stim Herba", "Skrab Seluruh Badan", "Body Mask Belakang Badan"]),
+                'extradescription' => json_encode(["Rendam Kaki Panas", "Terapi Wap Stim Herba", "Skrab Seluruh Badan", "Body Mask Belakang Badan"]),
                 'price' => '320.00',
                 'duration' => '150',
                 'type' => 'normal',
@@ -35,13 +45,13 @@ class ServiceSeeder extends Seeder
                 'image' => 'storage/service/ps2.png',
             ],
             [
-                'name' => 'Pecahkan Lemak Ekstra',
+                'name' => 'Terapi Pelangsingan Intensif',
                 'description' => 'Rawatan ini khas untuk memecahkan lemak degil yang melitupi organ dalaman. Kami juga menawarkan pelan permakanan percuma, khas untuk anda mengurangkan berat badan anda sebanyak 2KG seminggu.',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
                     "Serum Pelangsingan Eksklusif",
                     "Balutan Perut & Pinggul",
-                    "Sauna Wap Herba",
+                    "Terapi Wap Wap Herba",
                     "Urut Badan Selulit",
                     "Urut Badan Sel Lemak",
                     "Skrab Seluruh Badan",
@@ -55,11 +65,11 @@ class ServiceSeeder extends Seeder
                 'image' => 'storage/service/ps3.png',
             ],
             [
-                'name' => 'Puteri Gunung Ledang',
+                'name' => 'Terapi Herba Aromatik',
                 'description' => 'Mulakan sesi dengan wap wangi herba aromatik untuk menyahtoksin badan anda',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
-                    "Sauna Stim Herba",
+                    "Terapi Wap Stim Herba",
                     "Skrab Seluruh Badan",
                     "Body Mask Belakang Badan",
                     "Mandian Susu"
@@ -69,14 +79,13 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 1,
                 'image' => 'storage/service/ps4.png',
-
             ],
             [
-                'name' => 'Tun Teja',
-                'description' => 'Nikmati mandian bunga di suasana yang aman di spa kami dengan layanan bak ratu dengan pakej teristimewa Kapas',
+                'name' => 'Terapi Diraja Premium',
+                'description' => 'Nikmati mandian bunga di suasana yang aman di spa kami dengan layanan bak ratu dengan pakej teristimewa Lunara',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
-                    "Sauna Stim Herba",
+                    "Terapi Wap Stim Herba",
                     "Skrab Seluruh Badan",
                     "Body Mask Belakang Badan",
                     "Mandi Susu & Bunga",
@@ -89,23 +98,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 1,
                 'image' => 'storage/service/image_1710002234.png',
-
             ],
             [
-                'name' => 'Traditional Massage',
-                'description' => 'Urutan lembut yang boleh mengurangkan insomnia, stress dan bagus untuk peredaran darah',
-                'extradescription' => json_encode([]),  // Empty array since it's [\"\"]
-                'price' => '180.00',
-                'duration' => '60',
-                'type' => 'normal',
-                'category_id' => 2,
-                'image' => 'storage/service/image_1710053954.jpg',
-
-
-            ]
-            ,
-            [
-                'name' => 'Urutan Seluruh Badan',
+                'name' => 'Terapi Urutan Menyeluruh',
                 'description' => 'Urutan lembut yang boleh mengurangkan insomnia, stress dan bagus untuk peredaran darah',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -117,10 +112,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub2.png',
-
             ],
             [
-                'name' => 'Urutan 4-Tangan',
+                'name' => 'Urutan Harmoni Berganda',
                 'description' => 'Rasa relax yang berganda, merasakan puas dengan urutan yang akan dilakukan oleh 2 orang therapist',
                 'extradescription' => json_encode([
                     "Rendam Kaki",
@@ -132,10 +126,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub3.jpg',
-
             ],
             [
-                'name' => 'Urutan Seluruh Badan Aromaterapi',
+                'name' => 'Urutan Wangi Menenangkan',
                 'description' => 'Urutan menggunakan telapak tangan yang hangat dapat menghilangkan rasa sakit dan meningkatkan kualiti tidur. Urutan ini menggunakan minyak urut aromaterapi semula jadi yang dirumus khas untuk memberikan aroma yang menyegarkan sekaligus menenangkan minda. Anda akan berasa lebih bertenaga dan santai selepas urutan 60 minit ini.',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -147,13 +140,12 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub4.png',
-
             ],
             [
-                'name' => 'Rawatan Selulit Seluruh Badan',
+                'name' => 'Rawatan Kulit Licin',
                 'description' => 'Dimulakan dengan sauna untuk menenangkan badan, mengurangkan selulit',
                 'extradescription' => json_encode([
-                    "Sauna Wap Herba",
+                    "Terapi Wap Wap Herba",
                     "Radio Frequency",
                     "Cavitation Treatment",
                     "Losyen Anti Selulit + Selulit Massage"
@@ -163,10 +155,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub5.jpg',
-
             ],
             [
-                'name' => 'Urutan Belakang Badan',
+                'name' => 'Urutan Bahagian Belakang',
                 'description' => 'Urutan berfokus kepada bahagian belakang badan hingga belakang pinggang & kedua belah tangan & kepala. Urutan lembut untuk mengurangkan otot yang tegang.',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -177,15 +168,14 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub6.jpg',
-
             ],
             [
-                'name' => 'Urutan Peronggaan Frekuensi Radio + Steam Sauna',
+                'name' => 'Terapi Teknologi Moden',
                 'description' => 'Peronggaan ultrasonik menyelaraskan badan menggunakan frekuensi radio dan gelombang ultrasonik frekuensi rendah. Gelombang ini membentuk gelembung di sekitar deposit lemak di bawah kulit. Gelembung kemudian pecah, memecahkan deposit lemak ke dalam interstisial dan sistem limfa di mana ia disalirkan',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
                     "Balutan + Losyen Anti-Selulit",
-                    "Sauna Wap Herba",
+                    "Terapi Wap Wap Herba",
                     "RF Treatment (Untuk 1 bahagian badan)",
                     "Cavitation Treatment (Untuk 1 bahagian badan)"
                 ]),
@@ -194,10 +184,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub7.jpg',
-
             ],
             [
-                'name' => 'Urutan Kepala Bahu Leher',
+                'name' => 'Urutan Atas Badan',
                 'description' => 'Urutan yang berfokus kepada bahagian kepala, leher dan bahu mengurangkan ketegangan & sakit kepala yang disebabkan otot yang tegang dibahagian bahu.',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -209,25 +198,23 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/image_1710054665.jpg',
-
             ],
             [
-                'name' => 'Urut Kuasa Pecah Sel Lemak',
-                'description' => 'Sangat baik untuk ‘toning’, meningkatkan peredaran darah, membantu dalam pecahan deposit lemak dan selulit',
+                'name' => 'Terapi Langsing Berkesan',
+                'description' => 'Sangat baik untuk toning, meningkatkan peredaran darah, membantu dalam pecahan deposit lemak dan selulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
                     "Mesin Pelangsing G5",
-                    "Sauna Wap Herba"
+                    "Terapi Wap Wap Herba"
                 ]),
                 'price' => '180.00',
                 'duration' => '75',
                 'type' => 'normal',
                 'category_id' => 2,
                 'image' => 'storage/service/ub9.jpg',
-
             ],
             [
-                'name' => 'Mask Belakang Badan',
+                'name' => 'Penyahmampatan Kulit Belakang',
                 'description' => 'Membersihkan & mencerahkan bahagian belakang kulit.',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -239,10 +226,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 3,
                 'image' => 'storage/service/sk1.jpg',
-
             ],
             [
-                'name' => 'Skrub Belakang Badan',
+                'name' => 'Lulur Bahagian Belakang',
                 'description' => 'Berfokuskan membuang daki dan kulit mati bahagian belakang & melembutkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -254,11 +240,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 3,
                 'image' => 'storage/service/sk2.png',
-
             ],
-
             [
-                'name' => 'Skrub Seluruh Badan',
+                'name' => 'Lulur Badan Menyeluruh',
                 'description' => 'Membuang daki dan kulit mati serta melembutkan kulit untuk seluruh badan',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -270,15 +254,14 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 3,
                 'image' => 'storage/service/sk3.jpg',
-
             ],
             [
-                'name' => 'Skrub Seluruh Badan & Mask Badan Belakang',
-                'description' => 'Membuang daki dan kulit mati serta melembutkan kulit untuk seluruh badan. Membersihkan & mencerahkan bahagian kulit belakang.',
+                'name' => 'Lulur Lengkap + Penyahmampatan',
+                'description' => 'Membuang daki dan kulit mati serta melembutkan kulit untuk seluruh badan. Membersihkan & mencerahkan bahagian kulit belakang',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
                     "Skrub Seluruh Badan (40 minit)",
-                    "Mask Belakang Badan (10 minit)",
+                    "Mask Belakang Badan (10 mint)",
                     "Mandi (10 minit)"
                 ]),
                 'price' => '190.00',
@@ -286,11 +269,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 3,
                 'image' => 'storage/service/sk4.jpg',
-
             ],
-
             [
-                'name' => 'Rawatan Tegakkan & Bentukkan Wajah',
+                'name' => 'Rawatan Kencang Wajah',
                 'description' => 'Meregangkan kulit wajah, menegakkan dan membentuk kulit',
                 'extradescription' => json_encode([""]),
                 'price' => '230.00',
@@ -298,21 +279,19 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf1.jpg',
-
             ],
             [
-                'name' => 'Rawatan Mata Eksklusif',
-                'description' => 'Sama seperti tapak tangan, mengurut mata boleh menenangkan ketegangan mata. Gunakan jari yang bersih untuk menggosok kelopak mata anda dengan lembut, otot di atas kening anda, bawah mata anda dan tempat perlindungan. Dengan berbuat demikian, anda mengembangkan peredaran darah ke mata anda dan melegakan semua otot di sekeliling zon itu juga dengan rawatan muka kami yang menenangkan.',
+                'name' => 'Rawatan Mata Premium',
+                'description' => 'Sama seperti tapak tangan, mengurut mata boleh menenangkan ketegangan mata. Gunakan jari yang bersih untuk menggosok kelopak mata anda dengan lembut, otot di atas kening anda, bawah mata anda dan tempat perlindungan. Dengan berbuat demikian, anda mengembangkan peredaran darah ke mata anda dan melegakan semua otot di sekeliling zon itu juga dengan rawatan muka kami yang menenangkan',
                 'extradescription' => json_encode([""]),
                 'price' => '180.00',
                 'duration' => '90',
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf2.jpg',
-
             ],
             [
-                'name' => 'Rawatan Mata Menyegarkan',
+                'name' => 'Rawatan Mata Segar',
                 'description' => 'Sama seperti tapak tangan, mengurut mata boleh meredakan ketegangan mata. Gunakan jari yang bersih untuk mengurut kelopak mata anda, otot di atas kening, bawah mata dan tempat perlindungan anda. Dengan berbuat demikian, anda sedang mengembangkan peredaran darah ke mata anda dan meleraikan semua otot di sekeliling zon itu.',
                 'extradescription' => json_encode([""]),
                 'price' => '80.00',
@@ -320,21 +299,19 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf3.jpg',
-
             ],
             [
-                'name' => 'Rawatan Muka Antioxidant Collagen',
-                'description' => 'Melembabkan kulit & cepat meresap ke dalam kulit. Sesuai untuk kulit yang kering dan kusam',
+                'name' => 'Rawatan Muka Kolagen Lembap',
+                'description' => 'Melembabkan kulit & cepat meresap ke dalam kulit.Sesuai untuk kulit yang kering dan kusam',
                 'extradescription' => json_encode([""]),
                 'price' => '180.00',
                 'duration' => '90',
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf4.png',
-
             ],
             [
-                'name' => 'Rawatan Muka BB Glow',
+                'name' => 'Rawatan Muka Bercahaya Segar',
                 'description' => 'Memulihkan kulit wajah dengan segera dan membuat wajah lebih berseri',
                 'extradescription' => json_encode([""]),
                 'price' => '230.00',
@@ -342,10 +319,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf5.png',
-
             ],
             [
-                'name' => 'Rawatan Wajah Ageless O2',
+                'name' => 'Rawatan Wajah Awet Muda',
                 'description' => 'Melembapkan kulit yang dehidrasi, mengelupas kulit pada tahap yang lebih dalam dan mengekalkan kulit kelihatan muda',
                 'extradescription' => json_encode([""]),
                 'price' => '180.00',
@@ -353,10 +329,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf6.png',
-
             ],
             [
-                'name' => 'Pembersihan Pori Dalam',
+                'name' => 'Detoksifikasi Pori Wajah',
                 'description' => 'Mengurangkan white head & black head dengan gabungan LED mask',
                 'extradescription' => json_encode([""]),
                 'price' => '100.00',
@@ -364,10 +339,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf7.jpg',
-
             ],
             [
-                'name' => 'Rawatan Wajah Menyegarkan',
+                'name' => 'Rawatan Wajah Cerah Segar',
                 'description' => 'Menggunakan mask istimewa untuk wajah lebih segar',
                 'extradescription' => json_encode([""]),
                 'price' => '80.00',
@@ -375,10 +349,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 4,
                 'image' => 'storage/service/rf8.png',
-
             ],
             [
-                'name' => 'Mandian Bunga & Susu',
+                'name' => 'Rendaman Bunga Susu',
                 'description' => 'Gabungan mandian yang menaikkan seri serta melembutkan kulit badan',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -389,10 +362,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 5,
                 'image' => 'storage/service/m1.png',
-
             ],
             [
-                'name' => 'Mandian Garam Himalaya',
+                'name' => 'Rendaman Garam Laut',
                 'description' => 'Meredakan iritasi kulit, mencerahkan kulit dan menghilangkan radiasi dari badan',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -404,10 +376,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 5,
                 'image' => 'storage/service/m2.png',
-
             ],
             [
-                'name' => 'Mandian Herba',
+                'name' => 'Rendaman Herba Asli',
                 'description' => 'Mengurangkan stress & melembutkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -419,10 +390,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 5,
                 'image' => 'storage/service/m3.png',
-
             ],
             [
-                'name' => 'Mandian Susu',
+                'name' => 'Rendaman Susu Lembut',
                 'description' => 'Melembabkan & melembutkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -433,24 +403,22 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 5,
                 'image' => 'storage/service/m4.png',
-
             ],
             [
-                'name' => 'Sauna Wap Herba',
+                'name' => 'Terapi Wap Herba',
                 'description' => 'Membuang toksin dari dalam badan, melembutkan otot yang tegang',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
-                    "Sauna Wap Herba"
+                    "Terapi Wap Wap Herba"
                 ]),
                 'price' => '50.00',
                 'duration' => '30',
                 'type' => 'normal',
                 'category_id' => 6,
                 'image' => 'storage/service/s1.jpg',
-
             ],
             [
-                'name' => 'Foot Massage + Foot Paraffin Mask',
+                'name' => 'Urutan Kaki + Mask Parafin',
                 'description' => 'Mengurangkan sakit & melancarkan peredaran darah',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -462,10 +430,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 7,
                 'image' => 'storage/service/rk1.png',
-
             ],
             [
-                'name' => 'Spa Kaki Eksklusif',
+                'name' => 'Terapi Kaki  Lengkap',
                 'description' => 'Mengurangkan stress & miliki kaki yang bersih & lembut',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -481,10 +448,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 7,
                 'image' => 'storage/service/rk2.png',
-
             ],
             [
-                'name' => 'Urutan Kaki',
+                'name' => 'Refleksologi Kaki',
                 'description' => 'Mengurangkan sakit & melancarkan peredaran darah',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -496,10 +462,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 7,
                 'image' => 'storage/service/rk3.jpg',
-
             ],
             [
-                'name' => 'Ketiak',
+                'name' => 'Terapi Wax Bahagian Ketiak',
                 'description' => 'Melambatkan pertumbuhan bulu & melembutkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -511,10 +476,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 8,
                 'image' => 'storage/service/wx1.png',
-
             ],
             [
-                'name' => 'Seluruh Kaki',
+                'name' => 'Terapi Wax Kaki Menyeluruh',
                 'description' => 'Melambatkan pertumbuhan bulu & melembutkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -526,10 +490,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 8,
                 'image' => 'storage/service/wx2.png',
-
             ],
             [
-                'name' => 'Seluruh Tangan',
+                'name' => 'Terapi Wax Tangan Menyeluruh',
                 'description' => 'Melambatkan pertumbuhan bulu & melembutkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -541,10 +504,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 8,
                 'image' => 'storage/service/wx3.png',
-
             ],
             [
-                'name' => 'Bekam Angin',
+                'name' => 'Bekam Kering 17 Titik',
                 'description' => 'Membantu mengeluarkan angin dalam badan dan melegakan otot yang regang',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -558,10 +520,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 9,
                 'image' => 'storage/service/bs1.png',
-
             ],
             [
-                'name' => 'Bekam Sunnah ( 13 Cups )',
+                'name' => 'Bekam Basah 13 Titik',
                 'description' => 'Membantu membuang toksin dalam darah dan melegakan otot yang tegang',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -575,10 +536,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 9,
                 'image' => 'storage/service/bs2.png',
-
             ],
             [
-                'name' => 'Bekam Sunnah ( 23 Cups )',
+                'name' => 'Bekam Basah 23 Titik',
                 'description' => 'Membantu membuang toksin dalam darah dan melegakan otot yang tegang',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -592,32 +552,29 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 9,
                 'image' => 'storage/service/bs3.png',
-
             ],
             [
-                'name' => 'Rawatan Resdung',
+                'name' => 'Terapi Sinus',
                 'description' => 'Membersihkan sinus, mengelakkan jangkitan dan mengelakkan meningitis iaitu sejenis penyakit yang amat berbahaya',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '80.00',
                 'duration' => '60',
                 'type' => 'normal',
                 'category_id' => 10,
                 'image' => 'storage/service/rr1.png',
-
             ],
             [
-                'name' => 'Rawatan Resdung Facial',
+                'name' => 'Terapi Sinus + Wajah',
                 'description' => 'Rawatan resdung digabungkan dengan rawatan muka yang menyegarkan',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '150.00',
                 'duration' => '90',
                 'type' => 'normal',
                 'category_id' => 10,
                 'image' => 'storage/service/rr2.png',
-
             ],
             [
-                'name' => 'Balutan Perut',
+                'name' => 'Balutan Abdomen',
                 'description' => 'Meningkatkan metabolisme dan detoksifikasi dalam badan dan mengetatkan kulit',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -629,10 +586,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 11,
                 'image' => 'storage/service/bb1.png',
-
             ],
             [
-                'name' => 'Balutan Pinggang',
+                'name' => 'Balutan Zon Pinggang',
                 'description' => 'Meningkatkan metabolisme dan detoksifikasi dalam badan dan mengetatkan kulit.',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -644,22 +600,19 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 11,
                 'image' => 'storage/service/bb2.png',
-
             ],
             [
-                'name' => 'Serum Berganda',
+                'name' => 'Rawatan Serum Tambahan',
                 'description' => 'Pakej ini adalah tambahan kepada pakej lain.',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '50.00',
                 'duration' => '30',
                 'type' => 'normal',
                 'category_id' => 11,
                 'image' => 'storage/service/bb3.png',
-
             ],
-
             [
-                'name' => 'Kecederaan Buku Lali',
+                'name' => 'Terapi Pemulihan Buku Lali',
                 'description' => '',
                 'extradescription' => json_encode([
                     "Sakit, terutamanya apabila anda menanggung berat pada kaki yang terjejas",
@@ -675,21 +628,19 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs1.png',
-
             ],
             [
-                'name' => 'Bahu Kaku',
+                'name' => 'Terapi Pemulihan Bahu Kaku',
                 'description' => 'Bahu dan/atau lengan lemah dan kekakuan.',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '100.00',
                 'duration' => '60',
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs6.png',
-
             ],
             [
-                'name' => 'Cambuk',
+                'name' => 'Terapi Pemulihan Leher Tegang',
                 'description' => '',
                 'extradescription' => json_encode([
                     "Sakit leher dan kekakuan",
@@ -705,10 +656,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs7.png',
-
             ],
             [
-                'name' => 'Rehabilitasi Lutut',
+                'name' => 'Terapi Pemulihan Lutut',
                 'description' => '',
                 'extradescription' => json_encode([
                     "Anterior Cruciate Ligament (ACL)",
@@ -722,42 +672,39 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs2.png',
-
             ],
             [
-                'name' => 'Sindrom Carpal Tunnel',
+                'name' => 'Rawatan Carpal Tunnel',
                 'description' => '',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '100.00',
                 'duration' => '60',
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs3.png',
-
             ],
             [
-                'name' => 'Tendonitis',
+                'name' => 'Rawatan Tendonitis',
                 'description' => '',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '100.00',
                 'duration' => '60',
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs4.png',
-
             ],
             [
-                'name' => 'Urutan Sciatica',
+                'name' => 'Terapi Pemulihan Saraf Terjepit',
                 'description' => '',
-                'extradescription' => json_encode([]),
+                'extradescription' => json_encode([""]),
                 'price' => '180.00',
                 'duration' => '60',
                 'type' => 'normal',
                 'category_id' => 12,
                 'image' => 'storage/service/fs5.png',
-
-            ],[
-                'name' => 'Pedikur + Foot Scrub + Callus Treatment',
+            ],
+            [
+                'name' => 'Rawatan Kuku Kaki Lengkap',
                 'description' => 'Membersihkan kuku, merawat kulit kering & membuat kuku lebih bersinar',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -774,10 +721,9 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 13,
                 'image' => 'storage/service/ll1.png',
-
             ],
             [
-                'name' => 'Manikur + Skrub Tangan',
+                'name' => 'Rawatan Kuku Tangan Lengkap',
                 'description' => 'Membersihkan kuku, merawat kulit kering & membuat kuku lebih bersinar',
                 'extradescription' => json_encode([
                     "Rendam Kaki Panas",
@@ -795,7 +741,6 @@ class ServiceSeeder extends Seeder
                 'type' => 'normal',
                 'category_id' => 13,
                 'image' => 'storage/service/ll2.png',
-
             ]
         ];
 

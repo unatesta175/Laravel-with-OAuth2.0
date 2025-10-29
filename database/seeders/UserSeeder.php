@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
         // Create Admin User
         User::firstOrCreate(
-            ['email' => 'admin@kapasbeautyspa.com'],
+            ['email' => 'admin@lunaraspa.com'],
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password123'),
@@ -29,32 +29,32 @@ class UserSeeder extends Seeder
         $therapists = [
             [
                 'name' => 'Alicia Tan',
-                'email' => 'alicia@kapasbeautyspa.com',
+                'email' => 'alicia@lunaraspa.com',
                 'phone' => '+60123456790',
             ],
             [
                 'name' => 'Siti Rahman',
-                'email' => 'siti@kapasbeautyspa.com',
+                'email' => 'siti@lunaraspa.com',
                 'phone' => '+60123456791',
             ],
             [
                 'name' => 'Nurul Izzah',
-                'email' => 'nurul@kapasbeautyspa.com',
+                'email' => 'nurul@lunaraspa.com',
                 'phone' => '+60123456792',
             ],
             [
                 'name' => 'Maya Lee',
-                'email' => 'maya@kapasbeautyspa.com',
+                'email' => 'maya@lunaraspa.com',
                 'phone' => '+60123456793',
             ],
             [
                 'name' => 'Farah Lim',
-                'email' => 'farah@kapasbeautyspa.com',
+                'email' => 'farah@lunaraspa.com',
                 'phone' => '+60123456794',
             ],
             [
                 'name' => 'Lina Wong',
-                'email' => 'lina@kapasbeautyspa.com',
+                'email' => 'lina@lunaraspa.com',
                 'phone' => '+60123456795',
             ],
         ];

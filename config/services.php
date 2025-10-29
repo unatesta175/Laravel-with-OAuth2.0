@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'toyyibpay' => [
+        'secret_key' => env('TOYYIBPAY_SECRET_KEY'),
+        'category_code' => env('TOYYIBPAY_CATEGORY_CODE'),
+        'api_url' => env('TOYYIBPAY_API_URL', 'https://toyyibpay.com/index.php/api/createBill'),
+    ],
+
 ];

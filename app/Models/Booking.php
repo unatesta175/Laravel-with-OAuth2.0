@@ -109,15 +109,6 @@ class Booking extends Model
     }
 
     /**
-     * Check if booking can be rescheduled
-     */
-    public function canBeRescheduled(): bool
-    {
-        return in_array($this->status, [self::STATUS_PENDING, self::STATUS_CONFIRMED])
-               && $this->appointment_date >= today();
-    }
-
-    /**
      * Check if booking is completed and can be reviewed
      */
     public function canBeReviewed(): bool

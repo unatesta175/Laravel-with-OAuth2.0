@@ -220,16 +220,19 @@ class BookingController extends Controller
                     ? $booking->appointment_date->format('Y-m-d')
                     : (string) $booking->appointment_date;
 
+                // Get proper backend URL (with port if localhost)
+                $backendUrl = env('APP_URL', 'http://localhost:8000');
+
                 $toyyibPayData = [
-                    'userSecretKey' => 'm8zfj65c-2fzo-gq3b-rwhw-xvneusqy7wuy',
-                    'categoryCode' => '2n8qqo61',
+                    'userSecretKey' => env('TOYYIBPAY_SECRET_KEY'),
+                    'categoryCode' => env('TOYYIBPAY_CATEGORY_CODE'),
                     'billName' => 'BOOKING-' . $booking->id,
                     'billDescription' => 'Spa booking for ' . $service->name . ' on ' . $appointmentLocalDate,
                     'billPriceSetting' => 1,
                     'billPayorInfo' => 1,
                     'billAmount' => $amountInSen, // amount in sen
-                    'billReturnUrl' => config('app.url') . '/api/toyyibpay/callback',
-                    'billCallbackUrl' => config('app.url') . '/api/toyyibpay/callback',
+                    'billReturnUrl' => $backendUrl . '/api/toyyibpay/callback',
+                    'billCallbackUrl' => $backendUrl . '/api/toyyibpay/callback',
                     'billExternalReferenceNo' => 'SPA-BOOKING-' . $booking->id . '-' . time(),
                     'billTo' => $user->name,
                     'billEmail' => $user->email,
@@ -368,9 +371,14 @@ class BookingController extends Controller
             $billCode = $request->input('billcode');
             $statusId = $request->input('status_id');
             $transactionId = $request->input('transaction_id');
+            $orderNumber = $request->input('order_id');
+
+            // Frontend URL
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
 
             if (!$billCode) {
-                return response()->json(['success' => false, 'message' => 'Missing bill code'], 400);
+                \Log::error('ToyyibPay callback missing bill code');
+                return redirect($frontendUrl . '/my-bookings?payment=error&message=Missing bill code');
             }
 
             // Find payment by ToyyibPay transaction ID
@@ -378,7 +386,7 @@ class BookingController extends Controller
 
             if (!$payment) {
                 \Log::error('Payment not found for ToyyibPay callback:', ['billcode' => $billCode]);
-                return response()->json(['success' => false, 'message' => 'Payment not found'], 404);
+                return redirect($frontendUrl . '/my-bookings?payment=error&message=Payment record not found');
             }
 
             // Update payment status based on ToyyibPay response
@@ -400,21 +408,21 @@ class BookingController extends Controller
 
                 \Log::info('Payment marked as paid:', ['payment_id' => $payment->id, 'billcode' => $billCode]);
 
-                return response()->json(['success' => true, 'message' => 'Payment confirmed']);
+                // Redirect to frontend with success message
+                return redirect($frontendUrl . '/my-bookings?payment=success&message=Payment successful! Your booking is confirmed.');
             } else {
                 // Payment failed or pending
                 \Log::info('Payment failed or pending:', ['payment_id' => $payment->id, 'status_id' => $statusId]);
 
-                return response()->json(['success' => false, 'message' => 'Payment not successful']);
+                // Redirect to frontend with error message
+                return redirect($frontendUrl . '/my-bookings?payment=failed&message=Payment was not successful. Please try again.');
             }
 
         } catch (\Exception $e) {
             \Log::error('ToyyibPay callback error:', ['error' => $e->getMessage(), 'request' => $request->all()]);
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Callback processing failed'
-            ], 500);
+            $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
+            return redirect($frontendUrl . '/my-bookings?payment=error&message=An error occurred while processing your payment');
         }
     }
 
@@ -451,7 +459,7 @@ class BookingController extends Controller
     {
         return response()->json([
             'success' => false,
-            'message' => 'Direct booking updates not allowed. Use reschedule or cancel endpoints.'
+            'message' => 'Direct booking updates not allowed. Use cancel endpoint.'
         ], 403);
     }
 
@@ -467,81 +475,22 @@ class BookingController extends Controller
     }
 
     /**
-     * Reschedule a booking
-     */
-    public function reschedule($id, Request $request)
-    {
-        try {
-            $validator = Validator::make($request->all(), [
-                'appointment_date' => 'required|date|after_or_equal:' . now()->format('Y-m-d'),
-                'appointment_time' => 'required|date_format:H:i:s',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'errors' => $validator->errors(),
-                    'message' => 'Validation failed'
-                ], 422);
-            }
-
-            $user = Auth::user();
-            $booking = Booking::where('id', $id)
-                ->where('user_id', $user->id)
-                ->firstOrFail();
-
-            if (!$booking->canBeRescheduled()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'This booking cannot be rescheduled'
-                ], 400);
-            }
-
-            // Check if therapist is available at the new time
-            $existingBooking = Booking::where('therapist_id', $booking->therapist_id)
-                ->where('appointment_date', $request->appointment_date)
-                ->where('appointment_time', $request->appointment_time)
-                ->where('id', '!=', $booking->id)
-                ->whereIn('status', ['pending', 'confirmed', 'checked_in'])
-                ->first();
-
-            if ($existingBooking) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Therapist is not available at the selected time'
-                ], 409);
-            }
-
-            $booking->update([
-                'appointment_date' => $request->appointment_date,
-                'appointment_time' => $request->appointment_time,
-            ]);
-
-            $booking->load(['service.category', 'therapist', 'payment']);
-
-            return response()->json([
-                'success' => true,
-                'data' => $booking,
-                'message' => 'Booking rescheduled successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to reschedule booking: ' . $e->getMessage()
-            ], 500);
-        }
-    }
-
-    /**
      * Cancel a booking
      */
     public function cancel($id, Request $request)
     {
         try {
             $user = Auth::user();
-            $booking = Booking::where('id', $id)
-                ->where('user_id', $user->id)
-                ->firstOrFail();
+            
+            // Admin and therapist can cancel any booking
+            // Clients can only cancel their own bookings
+            if (in_array($user->role, ['admin', 'therapist'])) {
+                $booking = Booking::findOrFail($id);
+            } else {
+                $booking = Booking::where('id', $id)
+                    ->where('user_id', $user->id)
+                    ->firstOrFail();
+            }
 
             if (!$booking->canBeCancelled()) {
                 return response()->json([
@@ -550,9 +499,10 @@ class BookingController extends Controller
                 ], 400);
             }
 
+            $cancelledBy = $user->role === 'client' ? 'client' : 'staff';
             $booking->update([
                 'status' => Booking::STATUS_CANCELLED,
-                'notes' => $booking->notes . "\n\nCancellation reason: " . ($request->reason ?? 'No reason provided')
+                'notes' => $booking->notes . "\n\nCancellation reason: " . ($request->reason ?? 'No reason provided') . " (Cancelled by {$cancelledBy})"
             ]);
 
             $booking->load(['service.category', 'therapist', 'payment']);
@@ -668,7 +618,7 @@ class BookingController extends Controller
     {
         try {
             $user = Auth::user();
-            $booking = Booking::with(['service.category', 'therapist', 'payment'])
+            $booking = Booking::with(['service.category', 'therapist', 'payment', 'client'])
                 ->where('id', $id)
                 ->where('user_id', $user->id)
                 ->firstOrFail();
@@ -680,28 +630,15 @@ class BookingController extends Controller
                 ], 400);
             }
 
-            // For now, return a simple JSON receipt
-            // In production, you would generate a PDF
-            $receipt = [
-                'booking_id' => $booking->id,
-                'service' => $booking->service->name,
-                'category' => $booking->service->category->name,
-                'therapist' => $booking->therapist->name,
-                'date' => $booking->appointment_date,
-                'time' => $booking->appointment_time,
-                'amount' => $booking->total_amount,
-                'payment_method' => $booking->payment->payment_method,
-                'payment_status' => $booking->payment->status,
-                'paid_at' => $booking->payment->paid_at,
-                'generated_at' => now(),
-            ];
+            // Return HTML receipt view
+            return view('receipt', ['booking' => $booking]);
 
-            return response()->json([
-                'success' => true,
-                'data' => $receipt,
-                'message' => 'Receipt generated successfully'
-            ]);
         } catch (\Exception $e) {
+            \Log::error('Receipt generation error:', [
+                'error' => $e->getMessage(),
+                'booking_id' => $id
+            ]);
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to generate receipt: ' . $e->getMessage()
@@ -768,16 +705,19 @@ class BookingController extends Controller
                 ? $booking->appointment_date->format('Y-m-d')
                 : (string) $booking->appointment_date;
 
+            // Get proper backend URL (with port if localhost)
+            $backendUrl = env('APP_URL', 'http://localhost:8000');
+
             $toyyibPayData = [
-                'userSecretKey' => 'm8zfj65c-2fzo-gq3b-rwhw-xvneusqy7wuy',
-                'categoryCode' => '2n8qqo61',
+                'userSecretKey' => env('TOYYIBPAY_SECRET_KEY'),
+                'categoryCode' => env('TOYYIBPAY_CATEGORY_CODE'),
                 'billName' => 'BOOKING-' . $booking->id,
                 'billDescription' => 'Spa booking for ' . $service->name . ' on ' . $appointmentLocalDate,
                 'billPriceSetting' => 1,
                 'billPayorInfo' => 1,
                 'billAmount' => $amountInSen,
-                'billReturnUrl' => config('app.url') . '/api/toyyibpay/callback',
-                'billCallbackUrl' => config('app.url') . '/api/toyyibpay/callback',
+                'billReturnUrl' => $backendUrl . '/api/toyyibpay/callback',
+                'billCallbackUrl' => $backendUrl . '/api/toyyibpay/callback',
                 'billExternalReferenceNo' => 'SPA-BOOKING-' . $booking->id . '-RETRY-' . time(),
                 'billTo' => $user->name,
                 'billEmail' => $user->email,
